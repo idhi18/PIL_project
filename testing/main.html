@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://pyscript.net/releases/2023.11.1/core.css"
+    />
+
+    <script
+      type="module"
+      src="https://pyscript.net/releases/2023.11.1/core.js"
+    ></script>
+
+    <title>Document</title>
+  </head>
+  <body>
+    <py-env>
+      - Pillow
+  </py-env>
+    <label for="Upload a PNG image"></label>
+    <input type="file" id="file-upload" accept="image/*" />
+    <div id="output_upload"></div>
+  
+    <py-script src="./image_upload.py"></py-script>
+  </body>
+</html>

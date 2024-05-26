@@ -1,0 +1,72 @@
+* {
+  margin: 0;
+}
+
+#child {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+#greet {
+  margin-bottom: 1rem;
+  color: #655560;
+  text-align: center;
+  font-family: "Amatic SC", cursive;
+  font-size: 4rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 132.702%; /* 127.394px */
+  letter-spacing: 5.76px;
+}
+
+#logo {
+  width: 250px;
+  height: 250px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  animation-name: colorr;
+  animation-iteration-count: infinite;
+  animation-duration: 4s;
+  background-color: black
+  /* background-color: transparent; */
+
+
+}
+
+@keyframes colorr {
+    from {background-color: black;}
+    to {background-color: white;}
+}
+
+body {
+  border-radius: 8px;
+  background: linear-gradient(
+    135deg,
+    rgba(252, 247, 255, 0.6) 0%,
+    rgba(135, 140, 143, 0.47) 35.94%,
+    rgba(196, 202, 208, 0.82) 78.65%,
+    rgba(252, 247, 255, 0.82) 100%
+  );
+  backdrop-filter: blur(2px);
+}
+
+#login-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+#login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+#login-email,
+#login-password,
+#login-button {
+  margin: 0.5rem;
+}
