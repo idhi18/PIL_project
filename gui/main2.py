@@ -9,6 +9,8 @@ from detail import det
 from contour import cont
 from bright import br
 from boxblur import boxfilt
+from color import color
+import os
 
 tk_image = ''
 pil_image = ''
@@ -17,6 +19,7 @@ label_aspect_ratio = 0
 sharpness_factor = 1.0
 brightness_factor = 1.0
 boxblurradius_factor = 0
+color_factor = 1.0
 
 undo_stack = []
 redo_stack = []
@@ -42,6 +45,14 @@ def save_image():
     if pil_image:
         file_path = filedialog.asksaveasfilename(defaultextension=".jpg", filetypes=[("JPEG files", "*.jpg"), ("PNG files", "*.png"), ("All files", "*.*")])
         if file_path:
+
+            _, extension = os.path.splitext(file_path)
+            file_format = extension[1:].upper()
+
+            if file_format in ['JPEG', 'JPG'] and pil_image.mode == 'RGBA':
+                pil_image = pil_image.convert('RGB')
+            
+
             pil_image.save(file_path)
             messagebox.showinfo("Image Saved", f"Image saved successfully at {file_path}")
     else:
@@ -84,9 +95,9 @@ def show_error(message):
     messagebox.showerror("Error", message)
 
 def show_feature():
-    factor_features_label = ['Sharpness', 'Brightness', 'Blur']
-    factor_dec_btn_txt = ['- (min 0.0)', '- (min 0.0)', '- (min 0.0)']
-    factor_inc_btn_txt = ['+ (max 2.0)', ' + ', ' + ']
+    factor_features_label = ['Sharpness', 'Brightness', 'Blur', 'Color']
+    factor_dec_btn_txt = ['- (min 0.0)', '- (min 0.0)', '- (min 0.0)', ' - ']
+    factor_inc_btn_txt = ['+ (max 2.0)', ' + ', ' + ', ' + ']
     factor_value_label = {}
 
     def handle_rotate(value):
@@ -101,7 +112,7 @@ def show_feature():
             show_error("Image not found")
         
     def dec_feature_factor(btn_txt):
-        global sharpness_factor, brightness_factor, boxblurradius_factor
+        global sharpness_factor, brightness_factor, boxblurradius_factor, color_factor
         if btn_txt == 'Sharpness':
             if sharpness_factor <= 0:
                 messagebox.showerror("Sharpness factor error", "Sharpness factor has reached the minimum limit.")
@@ -121,10 +132,12 @@ def show_feature():
             else:
                 boxblurradius_factor = round(boxblurradius_factor - 0.1, 1)
                 factor_value_label[btn_txt].config(text = boxblurradius_factor)
-                
+        elif btn_txt == 'Color':
+            color_factor =round(color_factor - 0.1, 1)
+            factor_value_label[btn_txt].config(text = color_factor)
 
     def inc_feature_factor(txt):
-        global sharpness_factor, brightness_factor, boxblurradius_factor
+        global sharpness_factor, brightness_factor, boxblurradius_factor,color_factor
         if txt == 'Sharpness':
             if sharpness_factor >=2:
                 messagebox.showerror("Sharpness factor error", "Sharpness factor has reached the maximum limit.")
@@ -137,10 +150,13 @@ def show_feature():
         elif txt == 'Blur':
             boxblurradius_factor = round(boxblurradius_factor + 0.1, 1)
             factor_value_label[txt].config(text = boxblurradius_factor)
+        elif txt == 'Color':
+            color_factor = round(color_factor + 0.1, 1)
+            factor_value_label[txt].config(text = color_factor)
 
 
     def apply(txt):
-        global sharpness_factor, pil_image, brightness_factor, boxblurradius_factor
+        global sharpness_factor, pil_image, brightness_factor, boxblurradius_factor, color_factor
         if pil_image:
             push_undo(pil_image)
             if txt == 'Sharpness':
@@ -155,6 +171,8 @@ def show_feature():
                 pil_image = cont(pil_image)
             elif txt == 'Blur':
                 pil_image = boxfilt(pil_image, boxblurradius_factor)
+            elif txt == 'Color':
+                pil_image = color(pil_image, color_factor)
 
             update_display_image()
             redo_stack.clear()
@@ -162,13 +180,15 @@ def show_feature():
             show_error("image not found")
     
     def show_factor_value(txt):
-        global sharpness_factor, brightness_factor, boxblurradius_factor
+        global sharpness_factor, brightness_factor, boxblurradius_factor,color_factor
         if txt == "Sharpness":
             return sharpness_factor
         elif txt == "Brightness":
             return brightness_factor
         elif txt == "Blur":
             return boxblurradius_factor
+        elif txt == 'Color':
+            return color_factor
 
     for widgets in feature_frame.winfo_children():
         widgets.destroy()
@@ -242,7 +262,7 @@ base.geometry("1200x600")
 base.config(bg="#f6bd60")
 base.resizable(False, False)
 
-left_frame_btn_txt = ["Filters", "CLEAR", "btn_3"]
+left_frame_btn_txt = ["Filters", "CLEAR"]
 left_frame_btns = []
 
 right_frame_btn_txt = ["Open Image", "Remove image", "Save image", "Undo", "Redo"]
